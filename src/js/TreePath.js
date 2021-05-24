@@ -45,7 +45,35 @@ export class TreePath {
         const pathEl = document.createElement('span')
         let sepEl
         pathEl.className = 'jsoneditor-treepath-element'
-        pathEl.innerText = pathObj.name
+
+        let isNonRootIndex = false
+        let updatedName = ''
+
+        // Is this node  an array index
+        if(!isNaN(pathObj.name)) {
+
+          const parentName = pathObj?.node?.parent?.field
+
+          if(typeof parentName !== 'undefined') {
+       
+            pathObj?.children.forEach((currentChild) => {
+              
+              if(parentName.toUpperCase().includes(currentChild?.name.toUpperCase())) {
+
+                let nodeValue = currentChild?.node?.value
+
+                if(typeof nodeValue !== 'undefined') {
+
+                  isNonRootIndex = true
+                  updatedName = nodeValue
+                }
+              }
+            })          
+          }
+        }
+
+        pathEl.innerText = isNonRootIndex ? updatedName : pathObj.name
+
         pathEl.onclick = _onSegmentClick.bind(me, pathObj)
 
         me.path.appendChild(pathEl)
@@ -59,8 +87,36 @@ export class TreePath {
             me.contentMenuClicked = true
             const items = []
             pathObj.children.forEach(child => {
+          
+              let isNonRootIndex1 = false
+              let updatedName1 = ''
+      
+              // Is this node  an array index
+              if(!isNaN(child.name)) {
+      
+                const parentName1 = child?.node?.parent?.field
+      
+                if(typeof parentName1 !== 'undefined') {
+             
+                  child?.node?.childs.forEach((currentChild) => {
+                    
+                    if(parentName1.toUpperCase().includes(currentChild?.field.toUpperCase())) {
+      
+                      let nodeValue1 = currentChild?.value
+      
+                      if(typeof nodeValue1 !== 'undefined') {
+      
+                        isNonRootIndex1 = true
+                        updatedName1 = nodeValue1
+                      }
+                    }
+                  })                
+                }
+              }
+      
+
               items.push({
-                text: child.name,
+                text: isNonRootIndex1 ? updatedName1 : child.name,
                 className: 'jsoneditor-type-modes' + (pathObjs[idx + 1] + 1 && pathObjs[idx + 1].name === child.name ? ' jsoneditor-selected' : ''),
                 click: _onContextMenuItemClick.bind(me, pathObj, child.name)
               })

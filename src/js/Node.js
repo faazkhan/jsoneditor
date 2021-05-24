@@ -2218,7 +2218,27 @@ export class Node {
 
       let fieldText
       if (this.index !== undefined) {
-        fieldText = this.index
+        let isNonRootIndex1 = false
+        let updatedName1 = ''
+
+        const parentName1 = this.parent?.field
+
+        this.childs.forEach((currentChild) => {
+                    
+          if(parentName1.toUpperCase().includes(currentChild?.field.toUpperCase())) {
+
+            let nodeValue1 = currentChild?.value
+
+            if(typeof nodeValue1 !== 'undefined') {
+
+              isNonRootIndex1 = true
+              updatedName1 = nodeValue1
+            }
+          }
+        }) 
+
+        fieldText = isNonRootIndex1 ? updatedName1 : this.index
+
       } else if (this.field !== undefined) {
         fieldText = this.field
       } else {
